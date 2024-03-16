@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Messages | Firebase</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <form action="" id="contactForm">
+            <div class="alert">Your message sent</div>
+
+            <div class="inputBox">
+                <input type="text" id="sourceCity" placeholder="Source City" />
+            </div>
+
+            <div class="inputBox">
+                <input type="text" id="destinationCity" placeholder="Destination City" />
+            </div>
+
+            <div class="inputBox">
+                <input type="number" id="duration" placeholder="Duration of Trip (days)" />
+            </div>
+
+            <div class="inputBox">
+                <input type="number" id="budget" placeholder="Budget for the Trip ($)" />
+            </div>
+
+            <div class="inputBox">
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
+    <script src="./mail.js"></script>
+</body>
+
+</html>
+<script>
+    const firebaseConfig = {
+        //   copy your firebase config informations
+    };
+
+    // initialize firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // reference your database
+    var contactFormDB = firebase.database().ref("contactForm");
+
+    document.getElementById("contactForm").addEventListener("submit", submitForm);
+
+    function submitForm(e) {
+        e.preventDefault();
+
+        var sourceCity = getElementVal("sourceCity");
+        var destinationCity = getElementVal("destinationCity");
+        var duration = getElementVal("duration");
+        var budget = getElementVal("budget");
+
+        saveMessages(sourceCity, destinationCity, duration, budget);
+
+        //   enable alert
+        document.querySelector(".alert").style.display = "block";
+
+        //   remove the alert
+        setTimeout(() => {
+            document.querySelector(".alert").style.display = "none";
+        }, 3000);
+
+        //   reset the form
+        document.getElementById("contactForm").reset();
+    }
+
+    const saveMessages = (sourceCity, destinationCity, duration, budget) => {
+        var newContactForm = contactFormDB.push();
+
+        newContactForm.set({
+            sourceCity: sourceCity,
+            destinationCity: destinationCity,
+            duration: duration,
+            budget: budget,
+        });
+    };
+
+    const getElementVal = (id) => {
+        return document.getElementById(id).value;
+    };
+</script>
